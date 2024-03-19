@@ -13,7 +13,7 @@ class ConsoleRedirector:
 
 def run_script():
     # Run your script or command
-    script_path = "main.py"  # Replace with your script path
+    script_path = "../main.py"  # Replace with your script path
     process = subprocess.Popen(["python", script_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
     # Redirect stdout and stderr to the console widget

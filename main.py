@@ -146,18 +146,18 @@ def redirect_print_to_text_widget(text_widget):
     sys.stdout = TextRedirector(text_widget)
 
 class TextRedirector(io.TextIOBase):
-    def __init__(self, terminal):  # Set a default update interval (in milliseconds)
-        self.terminal = terminal
+    def __init__(self, text_widget):  # Set a default update interval (in milliseconds)
+        self.text_widget = text_widget
         # self.update_interval = update_interval
         # self.buffer = ""
 
     def write(self, text):
-        # # Write to the Text widget
-        # self.text_widget.insert(tk.END, text)
-        # self.text_widget.see(tk.END)  # Scroll to the end
         # Write to the Text widget
-        self.terminal.insert(tk.END, text)
-        self.terminal.see(tk.END)  # Scroll to the end
+        self.text_widget.insert(tk.END, text)
+        self.text_widget.see(tk.END)  # Scroll to the end
+        # # Write to the Text widget
+        # self.terminal.insert(tk.END, text)
+        # self.terminal.see(tk.END)  # Scroll to the end
         # Write to the standard console
         sys.__stdout__.write(text)
 
@@ -230,11 +230,11 @@ class TranslatorApp(ctk.CTk):
         self.mode_switch = ctk.CTkSwitch(self,text="☀", command=self.toggle_mode)
         # Create a Frame to hold the Text widget and scrollbar
         self.frame = ctk.CTkFrame(self)
-        # self.text_widget = tk.Text(self.frame, wrap=tk.WORD, font=("Helvetica", 18))
-        self.terminal = CTkTerminalWidget(self.frame, wrap=tk.WORD, font=("Helvetica", 18))
+        self.text_widget = tk.Text(self.frame, wrap=tk.WORD, font=("Helvetica", 18))
+        # self.terminal = CTkTerminalWidget(self.frame, wrap=tk.WORD, font=("Helvetica", 18))
         # Create a Scrollbar and link it to the Text widget
-        # self.scrollbar = tk.Scrollbar(self.frame, command=self.text_widget.yview)
-        self.scrollbar = tk.Scrollbar(self.frame, command=self.terminal.yview)
+        self.scrollbar = tk.Scrollbar(self.frame, command=self.text_widget.yview)
+        # self.scrollbar = tk.Scrollbar(self.frame, command=self.terminal.yview)
 
 
         # Set initial values
@@ -260,8 +260,8 @@ class TranslatorApp(ctk.CTk):
         self.translate_button.pack(pady=10)
         self.mode_switch.pack(pady=10)
         self.frame.pack(fill=tk.BOTH, expand=True)
-        # self.text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        self.terminal.pack(side = tk.LEFT, fill=tk.BOTH, expand=True)
+        self.text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # self.terminal.pack(side = tk.LEFT, fill=tk.BOTH, expand=True)
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y,anchor=tk.E)
 
         # Configure resizing behavior
@@ -269,11 +269,11 @@ class TranslatorApp(ctk.CTk):
         self.grid_rowconfigure(0, weight=1)
 
         # Redirect print output to both the console and the Text widget
-        # redirect_print_to_text_widget(self.text_widget)
+        redirect_print_to_text_widget(self.text_widget)
         # redirect_print_to_text_widget(self.terminal)
 
-        # self.text_widget.config(yscrollcommand=self.scrollbar.set)
-        self.terminal.config(yscrollcommand=self.scrollbar.set)
+        self.text_widget.config(yscrollcommand=self.scrollbar.set)
+        # self.terminal.config(yscrollcommand=self.scrollbar.set)
 
 
         ####
