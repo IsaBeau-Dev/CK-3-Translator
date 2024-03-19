@@ -4,7 +4,7 @@ import sys
 class CTkTerminalWidget(tk.Text):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        # self.config(state=tk.DISABLED)  # Disable direct editing
+        self.config(state=tk.DISABLED)  # Disable direct editing
         self.bind("<KeyPress>", self.handle_keypress)
         self.buffer = ""
 

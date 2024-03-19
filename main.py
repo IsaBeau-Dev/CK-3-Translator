@@ -1,5 +1,7 @@
 import io
 import os.path
+import sys
+
 import customtkinter as ctk
 from customtkinter import *
 import tkinter as tk
@@ -107,7 +109,8 @@ def translate(file_data, totalCount, from_language, to_language):
                 padded_translation = padded_translation.replace(REPLACER, t, 1)
 
             file_data[i + 1] = lines.replace("\"" + match + "\"", "\"" + padded_translation + "\"", 1)
-            print("line no. #" + str(totalCount), end="")
+            # print("line no. #" + str(totalCount)+" was translated", end="")
+            print("line no. #" + str(totalCount)+" was translated", end="")
         print()
 
 ##########GUI STUFF
@@ -143,17 +146,22 @@ def redirect_print_to_text_widget(text_widget):
     sys.stdout = TextRedirector(text_widget)
 
 class TextRedirector(io.TextIOBase):
-    def __init__(self, text_widget):  # Set a default update interval (in milliseconds)
-        self.text_widget = text_widget
+    def __init__(self, terminal):  # Set a default update interval (in milliseconds)
+        self.terminal = terminal
         # self.update_interval = update_interval
         # self.buffer = ""
 
     def write(self, text):
+        # # Write to the Text widget
+        # self.text_widget.insert(tk.END, text)
+        # self.text_widget.see(tk.END)  # Scroll to the end
         # Write to the Text widget
-        self.text_widget.insert(tk.END, text)
-        self.text_widget.see(tk.END)  # Scroll to the end
+        self.terminal.insert(tk.END, text)
+        self.terminal.see(tk.END)  # Scroll to the end
         # Write to the standard console
         sys.__stdout__.write(text)
+
+
 
     #     # Append to the buffer
     #     self.buffer += text
@@ -172,6 +180,40 @@ class TextRedirector(io.TextIOBase):
     #         self.buffer = ""  # Clear the buffer
 
     #######
+class CTkTerminalWidget(tk.Text):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        # self.config(state=tk.DISABLED)  # Disable direct editing
+        self.bind("<KeyPress>", self.handle_keypress)
+        self.buffer = ""
+
+    def handle_keypress(self, event):
+        if event.keysym == "Return":
+            # Handle user input (e.g., execute a command)
+            user_input = self.buffer.strip()
+            self.insert(tk.END, f"\n> {user_input}\n")
+            self.buffer = ""
+
+            # Simulate command execution (replace with your actual logic)
+            self.execute_command(user_input)
+
+            # Scroll to the end
+            self.see(tk.END)
+        elif event.keysym == "BackSpace":
+            # Handle backspace (delete last character)
+            self.buffer = self.buffer[:-1]
+        else:
+            self.buffer += event.char
+
+    def execute_command(self, command):
+        # Simulate command execution (replace with your actual logic)
+        if command.lower() == "hello":
+            self.insert(tk.END, "Hello, world!\n")
+        else:
+            self.insert(tk.END, f"Unknown command: {command}\n")
+
+    def flush(self):
+        pass  # No need to flush anything
 
 
 class TranslatorApp(ctk.CTk):
@@ -188,9 +230,11 @@ class TranslatorApp(ctk.CTk):
         self.mode_switch = ctk.CTkSwitch(self,text="☀", command=self.toggle_mode)
         # Create a Frame to hold the Text widget and scrollbar
         self.frame = ctk.CTkFrame(self)
-        self.text_widget = tk.Text(self.frame, wrap=tk.WORD, font=("Helvetica", 18))
+        # self.text_widget = tk.Text(self.frame, wrap=tk.WORD, font=("Helvetica", 18))
+        self.terminal = CTkTerminalWidget(self.frame, wrap=tk.WORD, font=("Helvetica", 18))
         # Create a Scrollbar and link it to the Text widget
-        self.scrollbar = tk.Scrollbar(self.frame, command=self.text_widget.yview)
+        # self.scrollbar = tk.Scrollbar(self.frame, command=self.text_widget.yview)
+        self.scrollbar = tk.Scrollbar(self.frame, command=self.terminal.yview)
 
 
         # Set initial values
@@ -216,7 +260,8 @@ class TranslatorApp(ctk.CTk):
         self.translate_button.pack(pady=10)
         self.mode_switch.pack(pady=10)
         self.frame.pack(fill=tk.BOTH, expand=True)
-        self.text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # self.text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.terminal.pack(side = tk.LEFT, fill=tk.BOTH, expand=True)
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y,anchor=tk.E)
 
         # Configure resizing behavior
@@ -224,9 +269,28 @@ class TranslatorApp(ctk.CTk):
         self.grid_rowconfigure(0, weight=1)
 
         # Redirect print output to both the console and the Text widget
-        redirect_print_to_text_widget(self.text_widget)
+        # redirect_print_to_text_widget(self.text_widget)
+        # redirect_print_to_text_widget(self.terminal)
 
-        self.text_widget.config(yscrollcommand=self.scrollbar.set)
+        # self.text_widget.config(yscrollcommand=self.scrollbar.set)
+        self.terminal.config(yscrollcommand=self.scrollbar.set)
+
+
+        ####
+        # Redirect stdout and stderr to the console widget
+        # sys.stdout = TextRedirector(self.terminal)
+        # sys.stderr = TextRedirector(self.terminal)
+
+        # # Capture and display the output
+        # for line in process.stdout:
+        #     print(line, end="")
+        # for line in process.stderr:
+        #     print(line, end="")
+
+        # Restore stdout and stderr
+        # sys.stdout = sys.__stdout__y
+        # sys.stderr = sys.__stderr__
+
 
     def _update_target_langs(self,event):
         # Get the current source language
@@ -245,6 +309,7 @@ class TranslatorApp(ctk.CTk):
         self.source_lang_combo.configure(values=source_languages)
 
     def translate_text(self):
+        # self.terminal.insert(tk.END,"jlkajsdlk")
         # Get selected languages
         source_lang = self.source_lang_combo.get()
         target_lang = self.target_lang_combo.get()
@@ -262,6 +327,7 @@ class TranslatorApp(ctk.CTk):
             if list_files(path):
                 # Perform translation based on user input
                 call(source_code,target_code,1,path)
+                # self.call(source_code,target_code,1,path)
                 print("Finished")
         else:
             print("No valid path was given")
@@ -276,6 +342,7 @@ class TranslatorApp(ctk.CTk):
             set_appearance_mode("light")
             self.text_widget.configure(bg="white", fg="black")
             self.mode_switch.configure(text="☀")  # Sun symbol
+
 
 if __name__ == "__main__":
     app = TranslatorApp()
