@@ -7,8 +7,9 @@ To use you need to do
 To use you need to know that:
 ![image](https://github.com/IsaBeau-Dev/CK-3-Translator/assets/90000605/211b4b01-d478-41fe-ad4f-4b700e0ab8e7)
 
-The box to put text in at the top is the path to your localization folder for example:`C:\Users\isabeau\Documents\Paradox Interactive\Crusader Kings III\mod\test\localization\english` The first selecting is the language you want to translate from and the second one is the target.
-You can also switch between light and dark mode
+The box to put text in at the top is the path to your localization folder for example:`C:\Users\isabeau\Documents\Paradox Interactive\Crusader Kings III\mod\test\localization\english`.
+The next drop_down selection menu is the language you want to translate from and the second one (the one below) is the target.
+You can also switch between light and dark mode. (You need to figure that out yourself ;) )
 The bottom of the window is filled with an output that sadly only works when the translation is finished as long as there wasnt an error beforehand. Thats why i decided to include the normal terminal (the black window that opens) so you can see the translation progress.
 
 
