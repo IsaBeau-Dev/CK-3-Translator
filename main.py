@@ -160,9 +160,7 @@ class TranslatorApp(ctk.CTk):
             if list_files(path):
                 # print("Found Valid files")
                 # Perform translation based on user input
-                # translator.call(source_code,target_code,1,path)
-                for i in range(1000):
-                    print(i)
+                translator.call(source_code,target_code,1,path)
                 print("Finished")
         else:
             print("No valid path was given")
