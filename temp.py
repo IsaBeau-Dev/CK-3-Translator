@@ -1,4 +1,3 @@
-import argostranslate.translate as at
 import argostranslate.package
 
 
@@ -11,5 +10,4 @@ for i in range(len(available_packages)):
     print("Installed: "+available_packages[i].from_code+"->"+available_packages[i].to_code)
 
 
-s = at.translate("Hello there you dumb shit, I am sitting here looking at you",from_code="en",to_code="de")
-print(s)
+print("Finished")

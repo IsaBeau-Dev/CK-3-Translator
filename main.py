@@ -1,10 +1,116 @@
 import io
 import os.path
-import sys
 import customtkinter as ctk
 from customtkinter import *
 import tkinter as tk
-import translator
+import re
+from pathlib import Path
+import argostranslate.translate as at
+
+######Translator
+RE_PATTERN = re.compile(r'\[[^"\]]*]|\$[^$]+\$|#[^$]+#|\\n')
+REPLACER = '{@}'
+def get_loc_code(from_l: bool, pars_arg: str):
+    locale_codes = {
+        'en': 'english',
+        'de': 'german',
+        'fr': 'french',
+        'es': 'spanish',
+        'ru': 'russian',
+        'zh-cn': 'simp_chinese',
+        'ko': 'korean'
+    }
+    locale = locale_codes.get(pars_arg)
+    if not locale:
+        locale = 'english' if from_l else 'german'
+    return locale
+def call(l1:str,l2:str,trans:int,path):
+    from_language = l1
+    to_language = l2
+    from_naming = get_loc_code(True, from_language)
+    to_naming = get_loc_code(False, to_language)
+
+    if trans == 1:
+        do_translation = True
+    else:
+        do_translation = False
+    target_dir = Path(path)
+
+    if not target_dir.exists():
+        print("The target directory doesn't exist")
+        raise SystemExit(1)
+    init(target_dir, do_translation, from_language, to_language, from_naming, to_naming)
+
+def init(target_dir, do_translation, from_language, to_language, from_naming, to_naming):
+    INPUT_DIR = target_dir
+    print("INPUT_DIR " + INPUT_DIR.__str__())
+
+    totalCount = 0
+
+    file: Path
+    for file in list(INPUT_DIR.rglob("*.yml*")):
+        filepath = os.path.dirname(os.path.abspath(file))
+        filename = file.name.split('/')[0]
+        newfileName = filename.replace(from_naming, to_naming)
+
+        # replace text in file
+        with open(file, 'r', encoding="utf-8") as f_r:
+            print('----------------------------------------------')
+            print("current File: " + file.name)
+            file_data = f_r.readlines()
+            file_data[0] = file_data[0].replace(from_naming, to_naming)
+            if do_translation:
+                translate(file_data, totalCount, from_language, to_language)
+            tofile(filepath, filename, file_data, from_naming, to_naming)
+def tofile(filepath, filename, file_data, from_naming, to_naming):
+    old_file = os.path.join(filepath, filename)
+    newfileName = filename.replace(from_naming, to_naming, 1)
+    new_filepath = filepath.replace(from_naming, to_naming, 1)
+    new_file = os.path.join(new_filepath, newfileName)
+
+    new_path = Path(new_file)
+    if not os.path.exists(new_filepath):
+        os.makedirs(new_filepath)
+
+    with open(new_path, 'w', encoding="utf-8") as f_r:
+        f_r.writelines(file_data)
+
+def translate(file_data, totalCount, from_language, to_language):
+    #  basic Translator in work
+    for i, lines in enumerate(file_data[1:]):
+        matches = re.findall('"([^"]*)"', lines)
+        # matches = re.findall(r'"(.*?)"', lines)
+        if len(matches) == 1 and matches is not None:
+            tokens = re.findall(RE_PATTERN, matches[0])
+
+            match = matches[0]
+            matches[0] = re.sub(RE_PATTERN, REPLACER, matches[0])
+            # translate
+            try:
+                translation = at.translate(matches[0], to_code=to_language, from_code=from_language)
+                padded_translation = translation
+            except TypeError:
+                translation = matches[0]
+                padded_translation = matches[0]
+                print('Error (TypeError) Skipped in: ' + matches[0])
+            except TimeoutError:
+                translation = matches[0]
+                padded_translation = matches[0]
+                print('Error (TimeOut) Skipped in: ' + matches[0])
+            except:
+                translation = matches[0]
+                padded_translation = matches[0]
+                print('Unknown Exception - Skipped in' + matches[0])
+            totalCount += 1
+
+            for t in tokens:
+                padded_translation = padded_translation.replace(REPLACER, t, 1)
+
+            file_data[i + 1] = lines.replace("\"" + match + "\"", "\"" + padded_translation + "\"", 1)
+            print("line no. #" + str(totalCount), end="")
+        print()
+
+##########GUI STUFF
 
 # Language mapping from display names to ISO 639 codes
 LANGUAGES = {
@@ -25,7 +131,7 @@ def list_files(directory):
     for root, dirs, files in os.walk(directory):
         for file in files:
             if file.lower().endswith(".yml"):
-                print(os.path.join(root, file))
+                # print(os.path.join(root, file))
                 found_files = True
 
     if not found_files:
@@ -37,12 +143,15 @@ def redirect_print_to_text_widget(text_widget):
     sys.stdout = TextRedirector(text_widget)
 
 class TextRedirector(io.TextIOBase):
-    def __init__(self, text_widget, update_interval=100):  # Set a default update interval (in milliseconds)
+    def __init__(self, text_widget):  # Set a default update interval (in milliseconds)
         self.text_widget = text_widget
-        self.update_interval = update_interval
-        self.buffer = ""
+        # self.update_interval = update_interval
+        # self.buffer = ""
 
     def write(self, text):
+        # Write to the Text widget
+        self.text_widget.insert(tk.END, text)
+        self.text_widget.see(tk.END)  # Scroll to the end
         # Write to the standard console
         sys.__stdout__.write(text)
 
@@ -63,9 +172,7 @@ class TextRedirector(io.TextIOBase):
     #         self.buffer = ""  # Clear the buffer
 
     #######
-        # Write to the Text widget
-        self.text_widget.insert(tk.END, text)
-        self.text_widget.see(tk.END)  # Scroll to the end
+
 
 class TranslatorApp(ctk.CTk):
     def __init__(self):
@@ -101,11 +208,6 @@ class TranslatorApp(ctk.CTk):
         # Update the values of the source combobox
         self.source_lang_combo.configure(values=source_languages)
         ####
-
-
-        # Bind the combobox changes to update values
-        # self.source_lang_combo.bind("<<ComboboxSelected>>", self._update_target_langs)
-        # self.target_lang_combo.bind("<<ComboboxSelected>>", self._update_source_langs)
 
         # Pack widgets
         self.path_entry.pack(fill="x", padx=20, pady=10)
@@ -158,17 +260,11 @@ class TranslatorApp(ctk.CTk):
         if os.path.exists(path):
             print(f"Path to localization : {path} \n\n")
             if list_files(path):
-                # print("Found Valid files")
                 # Perform translation based on user input
-                translator.call(source_code,target_code,1,path)
+                call(source_code,target_code,1,path)
                 print("Finished")
         else:
             print("No valid path was given")
-
-
-
-
-
 
     def toggle_mode(self):
         # Switch appearance mode (light/dark)
