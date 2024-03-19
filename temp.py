@@ -2,10 +2,7 @@ import argostranslate.translate as at
 import argostranslate.package
 
 
-from_code = "en"
-to_code = "de"
-
-# Download and install Argos Translate package
+# Download and install all Argos Translate package
 argostranslate.package.update_package_index()
 available_packages = argostranslate.package.get_available_packages()
 

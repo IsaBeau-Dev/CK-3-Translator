@@ -73,25 +73,50 @@ def get_loc_code(from_l: bool, pars_arg: str):
     return locale
 
 
-def parseargs():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-l1", type=str, default="en")
-    parser.add_argument("-l2", type=str, default="de")
-    parser.add_argument("-trans", type=int, default=1)
-    parser.add_argument("path")
+# def parseargs():
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument("-l1", type=str, default="en")
+#     parser.add_argument("-l2", type=str, default="de")
+#     parser.add_argument("-trans", type=int, default=1)
+#     parser.add_argument("path")
+#
+#     args = parser.parse_args()
+#     from_language = args.l1
+#     to_language = args.l2
+#     from_naming = get_loc_code(True, from_language)
+#     to_naming = get_loc_code(False, to_language)
+#
+#     if args.trans == 1:
+#         do_translation = True
+#     else:
+#         do_translation = False
+#     # target_dir = "D:\Downloads\CK3_LocalizationChanger-main\db\Testing\Testcases_english.yml"
+#     target_dir = Path(args.path)
+#
+#     if not target_dir.exists():
+#         print("The target directory doesn't exist")
+#         raise SystemExit(1)
+#     init(target_dir, do_translation, from_language, to_language, from_naming, to_naming)
 
-    args = parser.parse_args()
-    from_language = args.l1
-    to_language = args.l2
+def call(l1:str,l2:str,trans:int,path):
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("-l1", type=str, default="en")
+    # parser.add_argument("-l2", type=str, default="de")
+    # parser.add_argument("-trans", type=int, default=1)
+    # parser.add_argument("path")
+
+    # args = parser.parse_args()
+    from_language = l1
+    to_language = l2
     from_naming = get_loc_code(True, from_language)
     to_naming = get_loc_code(False, to_language)
 
-    if args.trans == 1:
+    if trans == 1:
         do_translation = True
     else:
         do_translation = False
     # target_dir = "D:\Downloads\CK3_LocalizationChanger-main\db\Testing\Testcases_english.yml"
-    target_dir = Path(args.path)
+    target_dir = Path(path)
 
     if not target_dir.exists():
         print("The target directory doesn't exist")
@@ -147,23 +172,23 @@ def translate(file_data, totalCount, from_language, to_language):
             match = matches[0]
             matches[0] = re.sub(RE_PATTERN, REPLACER, matches[0])
 
-            # timeout is needed otherwise api will block usage
-            if DEBUG:
-                print("Timeout API.")
-                for j in range(2, 0, -1):
-                    print(j, end="...")
-                    time.sleep(0.1)
-                    # time.sleep(2)
-                print("resuming")
-            else:
-                # time.sleep(2)
-                time.sleep(0.1)
+            #remove timeout
+            # # timeout is needed otherwise api will block usage
+            # if DEBUG:
+            #     print("Timeout API.")
+            #     for j in range(2, 0, -1):
+            #         print(j, end="...")
+            #         time.sleep(0.1)
+            #         # time.sleep(2)
+            #     print("resuming")
+            # else:
+            #     # time.sleep(2)
+            #     time.sleep(0.1)
             # translate
             try:
                 # translation = translator.translate(matches[0], dest=to_language, src=from_language)
-                translation = at.translate(matches[0], dest=to_language, src=from_language)
-
-                padded_translation = translation.text
+                translation = at.translate(matches[0], to_code=to_language, from_code=from_language)
+                padded_translation = translation
             except TypeError:
                 translation = matches[0]
                 padded_translation = matches[0]
@@ -192,7 +217,3 @@ def translate(file_data, totalCount, from_language, to_language):
                 print(match + " <- " + padded_translation)
             print("line no. #" + str(totalCount), end="")
         print()
-
-
-if __name__ == "__main__":
-    parseargs()

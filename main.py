@@ -1,8 +1,10 @@
 import io
+import os.path
 import sys
 import customtkinter as ctk
 from customtkinter import *
 import tkinter as tk
+import translator
 
 # Language mapping from display names to ISO 639 codes
 LANGUAGES = {
@@ -13,6 +15,23 @@ LANGUAGES = {
     "Simplified Chinese": "zh",
     "Korean": "ko"
 }
+
+def list_files(directory):
+    """
+    Prints all files in the given directory and its subdirectories.
+    """
+    found_files = False  # Flag to track if any files were found
+
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.lower().endswith(".yml"):
+                print(os.path.join(root, file))
+                found_files = True
+
+    if not found_files:
+        print("No files found")
+
+    return found_files
 
 def redirect_print_to_text_widget(text_widget):
     sys.stdout = TextRedirector(text_widget)
@@ -28,33 +47,6 @@ class TextRedirector(io.TextIOBase):
         # Write to the Text widget
         self.text_widget.insert(tk.END, text)
         self.text_widget.see(tk.END)  # Scroll to the end
-
-
-class CustomSwitch(tk.Frame):
-    def __init__(self, master=None, **kwargs):
-        super().__init__(master, **kwargs)
-        self.switch_state = tk.BooleanVar(value=False)
-
-        # Create moon and sun labels
-        self.moon_label = tk.Label(self, text="🌙", font=("Arial", 12))
-        self.sun_label = tk.Label(self, text="☀️", font=("Arial", 12))
-
-        # Create switch button
-        self.switch_button = tk.Checkbutton(self, variable=self.switch_state, command=self.toggle_switch)
-
-        # Pack labels and button
-        self.moon_label.pack(side="left")
-        self.switch_button.pack(side="left")
-        self.sun_label.pack(side="left")
-
-    def toggle_switch(self):
-        # Update labels based on switch state
-        if self.switch_state.get():
-            self.moon_label.config(foreground="gray")
-            self.sun_label.config(foreground="yellow")
-        else:
-            self.moon_label.config(foreground="yellow")
-            self.sun_label.config(foreground="gray")
 
 class TranslatorApp(ctk.CTk):
     def __init__(self):
@@ -136,19 +128,28 @@ class TranslatorApp(ctk.CTk):
         source_lang = self.source_lang_combo.get()
         target_lang = self.target_lang_combo.get()
 
-        # Ensure different source and target languages
-        if source_lang == target_lang:
-            print("Source and target languages must be different.")
-            return
-
         # Convert to ISO 639 codes
         source_code = LANGUAGES.get(source_lang)
         target_code = LANGUAGES.get(target_lang)
 
-        print(f"Source language (ISO code): {source_code}")
-        print(f"Target language (ISO code): {target_code}")
+        print(f"Source language : {source_code}")
+        print(f"Target language : {target_code}")
 
-        # Perform translation based on user input
+        path = self.path_entry.get()
+        if os.path.exists(path):
+            print(f"Path to localization : {path} \n\n")
+            if list_files(path):
+                # print("Found Valid files")
+                # Perform translation based on user input
+                translator.call(source_code,target_code,1,path)
+                print("Finished")
+        else:
+            print("No valid path was given")
+
+
+
+
+
 
     def toggle_mode(self):
         # Switch appearance mode (light/dark)
