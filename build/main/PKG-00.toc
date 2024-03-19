@@ -1,0 +1,79 @@
+('D:\\Github Projects\\my projects\\my_translator_2024\\build\\main\\CK3 '
+ 'Language Transilator.pkg',
+ {'BINARY': True,
+  'DATA': True,
+  'EXECUTABLE': True,
+  'EXTENSION': True,
+  'PYMODULE': True,
+  'PYSOURCE': True,
+  'PYZ': False,
+  'SPLASH': True,
+  'SYMLINK': False},
+ [('pyi-contents-directory _internal', '', 'OPTION'),
+  ('PYZ-00.pyz',
+   'D:\\Github Projects\\my '
+   'projects\\my_translator_2024\\build\\main\\PYZ-00.pyz',
+   'PYZ'),
+  ('struct',
+   'D:\\Github Projects\\my '
+   'projects\\my_translator_2024\\build\\main\\localpycs\\struct.pyc',
+   'PYMODULE'),
+  ('pyimod01_archive',
+   'D:\\Github Projects\\my '
+   'projects\\my_translator_2024\\build\\main\\localpycs\\pyimod01_archive.pyc',
+   'PYMODULE'),
+  ('pyimod02_importers',
+   'D:\\Github Projects\\my '
+   'projects\\my_translator_2024\\build\\main\\localpycs\\pyimod02_importers.pyc',
+   'PYMODULE'),
+  ('pyimod03_ctypes',
+   'D:\\Github Projects\\my '
+   'projects\\my_translator_2024\\build\\main\\localpycs\\pyimod03_ctypes.pyc',
+   'PYMODULE'),
+  ('pyimod04_pywin32',
+   'D:\\Github Projects\\my '
+   'projects\\my_translator_2024\\build\\main\\localpycs\\pyimod04_pywin32.pyc',
+   'PYMODULE'),
+  ('pyiboot01_bootstrap',
+   'E:\\MSI\\thore\\ck3 '
+   'modding\\definitiongenerator\\venv\\lib\\site-packages\\PyInstaller\\loader\\pyiboot01_bootstrap.py',
+   'PYSOURCE'),
+  ('pyi_rth_inspect',
+   'E:\\MSI\\thore\\ck3 '
+   'modding\\definitiongenerator\\venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_inspect.py',
+   'PYSOURCE'),
+  ('pyi_rth_multiprocessing',
+   'E:\\MSI\\thore\\ck3 '
+   'modding\\definitiongenerator\\venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_multiprocessing.py',
+   'PYSOURCE'),
+  ('pyi_rth_pkgutil',
+   'E:\\MSI\\thore\\ck3 '
+   'modding\\definitiongenerator\\venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgutil.py',
+   'PYSOURCE'),
+  ('pyi_rth_setuptools',
+   'E:\\MSI\\thore\\ck3 '
+   'modding\\definitiongenerator\\venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_setuptools.py',
+   'PYSOURCE'),
+  ('pyi_rth_pkgres',
+   'E:\\MSI\\thore\\ck3 '
+   'modding\\definitiongenerator\\venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgres.py',
+   'PYSOURCE'),
+  ('pyi_rth_mplconfig',
+   'E:\\MSI\\thore\\ck3 '
+   'modding\\definitiongenerator\\venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_mplconfig.py',
+   'PYSOURCE'),
+  ('pyi_rth__tkinter',
+   'E:\\MSI\\thore\\ck3 '
+   'modding\\definitiongenerator\\venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth__tkinter.py',
+   'PYSOURCE'),
+  ('main',
+   'D:\\Github Projects\\my projects\\my_translator_2024\\main.py',
+   'PYSOURCE')],
+ 'python39.dll',
+ True,
+ False,
+ False,
+ [],
+ None,
+ None,
+ None)

@@ -219,7 +219,7 @@ class CTkTerminalWidget(tk.Text):
 class TranslatorApp(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("Language Translator")
+        self.title("CK3 Language Transilator")
         self.geometry("600x400")  # Set initial window size
 
         # Create widgets
@@ -269,7 +269,7 @@ class TranslatorApp(ctk.CTk):
         self.grid_rowconfigure(0, weight=1)
 
         # Redirect print output to both the console and the Text widget
-        redirect_print_to_text_widget(self.text_widget)
+        # redirect_print_to_text_widget(self.text_widget)
         # redirect_print_to_text_widget(self.terminal)
 
         self.text_widget.config(yscrollcommand=self.scrollbar.set)
@@ -319,18 +319,23 @@ class TranslatorApp(ctk.CTk):
         target_code = LANGUAGES.get(target_lang)
 
         print(f"Source language : {source_code}")
+        self.output(f"Source language : {source_code}")
         print(f"Target language : {target_code}")
+        self.output(f"Target language : {target_code}")
 
         path = self.path_entry.get()
         if os.path.exists(path):
             print(f"Path to localization : {path} \n\n")
+            self.output(f"Path to localization : {path} \n\n")
             if list_files(path):
                 # Perform translation based on user input
                 call(source_code,target_code,1,path)
                 # self.call(source_code,target_code,1,path)
                 print("Finished")
+                self.output("Finished")
         else:
             print("No valid path was given")
+            self.output("No valid path was given")
 
     def toggle_mode(self):
         # Switch appearance mode (light/dark)
@@ -342,7 +347,11 @@ class TranslatorApp(ctk.CTk):
             set_appearance_mode("light")
             self.text_widget.configure(bg="white", fg="black")
             self.mode_switch.configure(text="☀")  # Sun symbol
-
+    def output(self,text):
+        # Write to the Text widget
+        input = text+"\n"
+        self.text_widget.insert(tk.END, input)
+        self.text_widget.see(tk.END)  # Scroll to the end
 
 if __name__ == "__main__":
     app = TranslatorApp()
