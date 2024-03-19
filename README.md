@@ -1,6 +1,7 @@
 # CK 3 Translator
 To use you need to do
 1. Install python and pip https://pip.pypa.io/en/stable/installation/
+2. Execute the installer.exe (this installs everything needed from https://github.com/argosopentech/argos-translate this may take some time)
 
 
  
