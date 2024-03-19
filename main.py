@@ -37,13 +37,32 @@ def redirect_print_to_text_widget(text_widget):
     sys.stdout = TextRedirector(text_widget)
 
 class TextRedirector(io.TextIOBase):
-    def __init__(self, text_widget):
+    def __init__(self, text_widget, update_interval=100):  # Set a default update interval (in milliseconds)
         self.text_widget = text_widget
+        self.update_interval = update_interval
+        self.buffer = ""
 
     def write(self, text):
         # Write to the standard console
         sys.__stdout__.write(text)
 
+    #     # Append to the buffer
+    #     self.buffer += text
+    #
+    #     # Check if it's time to update the Text widget
+    #     if len(self.buffer) >= self.update_interval:
+    #         self.text_widget.insert(tk.END, self.buffer)
+    #         self.text_widget.see(tk.END)  # Scroll to the end
+    #         self.buffer = ""  # Clear the buffer
+    #
+    # def flush(self):
+    #     # Flush any remaining content
+    #     if self.buffer:
+    #         self.text_widget.insert(tk.END, self.buffer)
+    #         self.text_widget.see(tk.END)  # Scroll to the end
+    #         self.buffer = ""  # Clear the buffer
+
+    #######
         # Write to the Text widget
         self.text_widget.insert(tk.END, text)
         self.text_widget.see(tk.END)  # Scroll to the end
@@ -141,7 +160,9 @@ class TranslatorApp(ctk.CTk):
             if list_files(path):
                 # print("Found Valid files")
                 # Perform translation based on user input
-                translator.call(source_code,target_code,1,path)
+                # translator.call(source_code,target_code,1,path)
+                for i in range(1000):
+                    print(i)
                 print("Finished")
         else:
             print("No valid path was given")

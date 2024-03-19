@@ -1,35 +1,46 @@
 import tkinter as tk
-from tkinter import ttk
+import sys
 
-class MyApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Terminal with Scrollbar")
-        self.root.geometry("700x500")
+class CTkTerminalWidget(tk.Text):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        # self.config(state=tk.DISABLED)  # Disable direct editing
+        self.bind("<KeyPress>", self.handle_keypress)
+        self.buffer = ""
 
-        # Create a Frame to hold the Text widget and scrollbar
-        self.frame = ttk.Frame(root)
-        self.frame.pack(fill=tk.BOTH, expand=True)
+    def handle_keypress(self, event):
+        if event.keysym == "Return":
+            # Handle user input (e.g., execute a command)
+            user_input = self.buffer.strip()
+            self.insert(tk.END, f"\n> {user_input}\n")
+            self.buffer = ""
 
-        # Create a Text widget for terminal-like output
-        self.output_text = tk.Text(self.frame, wrap=tk.WORD)
-        self.output_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            # Simulate command execution (replace with your actual logic)
+            self.execute_command(user_input)
 
-        # Create a Scrollbar and connect it to the Text widget
-        self.scrollbar = ttk.Scrollbar(self.frame, command=self.output_text.yview)
-        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.output_text.configure(yscrollcommand=self.scrollbar.set)
+            # Scroll to the end
+            self.see(tk.END)
+        else:
+            self.buffer += event.char
 
-        # Create a button to trigger output (for demonstration)
-        self.button = ttk.Button(root, text="Print", command=self.display_output)
-        self.button.pack()
+    def execute_command(self, command):
+        # Simulate command execution (replace with your actual logic)
+        if command.lower() == "hello":
+            self.insert(tk.END, "Hello, world!\n")
+        else:
+            self.insert(tk.END, f"Unknown command: {command}\n")
 
-    def display_output(self):
-        # Simulate terminal output
-        new_output = "Hello, world!\n"
-        self.output_text.insert(tk.END, new_output)
+    def flush(self):
+        pass  # No need to flush anything
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = MyApp(root)
+    root.title("CustomTkinter Terminal")
+
+    terminal = CTkTerminalWidget(root, wrap=tk.WORD)
+    terminal.pack(fill=tk.BOTH, expand=True)
+
+    # Redirect stdout to the terminal
+    sys.stdout = terminal
+
     root.mainloop()
