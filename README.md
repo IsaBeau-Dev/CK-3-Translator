@@ -16,3 +16,4 @@ Uses: https://github.com/argosopentech/argos-translate to translate
 
 Backend is based on a edited version of: https://github.com/CyberNord/CK3_LocalizationChanger
 The new part is the User Interface aka that you can use it graphically and also the implementation of https://github.com/argosopentech/argos-translate, so it is working offline and doesn`t have a cooldown cardcoded to translate a new line
+![ck3transilator](https://github.com/IsaBeau-Dev/CK-3-Translator/assets/90000605/e7d9ea75-9523-4f16-acf4-d13a921aa454)
